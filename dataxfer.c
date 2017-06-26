@@ -4074,6 +4074,9 @@ data_monitor_start(struct controller_info *cntlr,
 	port->net_monitor = cntlr;
     } else if (strcmp(type, "term") == 0) {
 	port->dev_monitor = cntlr;
+    } else if (strcmp(type, "both") == 0) {
+	port->net_monitor = cntlr;
+	port->dev_monitor = cntlr;
     } else {
 	char *err = "invalid monitor type: ";
 	controller_outs(cntlr, err);
