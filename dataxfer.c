@@ -3854,6 +3854,35 @@ find_port_by_num(char *portstr, bool allow_deleted)
     return NULL;
 }
 
+/*
+ * Get a port data structure given a port index.  Returns with port->lock
+ * held, if it returns a non-NULL port.
+ */
+static port_info_t *
+get_port_by_index(int index, bool allow_deleted)
+{
+    port_info_t *port;
+	int i;
+
+    LOCK(ports_lock);
+    port = ports;
+    for(i = 0; port != NULL; i ++) {
+	if (i == index) {
+	    LOCK(port->lock);
+	    UNLOCK(ports_lock);
+	    if (port->config_num == -1 && !allow_deleted) {
+		UNLOCK(port->lock);
+		return NULL;
+	    }
+	    return port;
+	}
+	port = port->next;
+    }
+
+    UNLOCK(ports_lock);
+    return NULL;
+}
+
 /* Handle a showport command from the control port. */
 void
 showports(struct controller_info *cntlr, char *portspec)
@@ -4054,6 +4083,7 @@ data_monitor_start(struct controller_info *cntlr,
 {
     port_info_t *port;
 
+    if(portspec != null) {
     port = find_port_by_num(portspec, true);
     if (port == NULL) {
 	char *err = "Invalid port number: ";
@@ -4061,6 +4091,15 @@ data_monitor_start(struct controller_info *cntlr,
 	controller_outs(cntlr, portspec);
 	controller_outs(cntlr, "\r\n");
 	goto out;
+    }
+    } else {
+    port = get_port_by_index(0, true);
+    if (port == NULL) {
+	controller_outs(cntlr, "Can't find available port number: ");
+	controller_outs(cntlr, "index at 0");
+	controller_outs(cntlr, "\r\n");
+	goto out;
+    }
     }
 
     if ((port->net_monitor != NULL) || (port->dev_monitor != NULL)) {

@@ -413,11 +413,13 @@ process_input_line(controller_info_t *cntlr)
 	    }
 
 	    str = strtok_r(NULL, " \t", &strtok_data);
+	    /*
 	    if (str == NULL) {
 		char *err = "No tcp port given\r\n";
 		controller_outs(cntlr, err);
 		goto out;
 	    }
+	    */
 	    start_maint_op();
 	    cntlr->monitor_port_id = data_monitor_start(cntlr, tok, str);
 	    end_maint_op();
