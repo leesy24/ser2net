@@ -4083,7 +4083,7 @@ data_monitor_start(struct controller_info *cntlr,
 {
     port_info_t *port;
 
-    if(portspec != null) {
+    if(portspec != NULL) {
     port = find_port_by_num(portspec, true);
     if (port == NULL) {
 	char *err = "Invalid port number: ";
