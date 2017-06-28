@@ -3677,6 +3677,16 @@ clear_old_port_config(int curr_config)
 #define REMOTEADDR_COLUMN_WIDTH \
     (INET6_ADDRSTRLEN - 1 /* terminating NUL */ + 1 /* comma */ + 5 /* strlen("65535") */)
 
+/* Print device rx tx bytes information of port to the control port given in cntlr. */
+static void
+showdevrxtx(struct controller_info *cntlr, port_info_t *port)
+{
+    controller_outputf(cntlr, "%s ", port->io.devname);
+    controller_outputf(cntlr, "%d ", port->dev_bytes_received);
+    controller_outputf(cntlr, "%d", port->dev_bytes_sent);
+    controller_outs(cntlr, "\r\n");
+}
+
 /* Print information about a port to the control port given in cntlr. */
 static void
 showshortport(struct controller_info *cntlr, port_info_t *port)
@@ -3949,6 +3959,34 @@ showshortports(struct controller_info *cntlr, char *portspec)
 	    controller_outputf(cntlr, "Invalid port number: %s\r\n", portspec);
 	} else {
 	    showshortport(cntlr, port);
+	    UNLOCK(port->lock);
+	}
+    }
+}
+
+/* Handle a showdevrxtx command from the control port. */
+void
+showdevrxtxs(struct controller_info *cntlr, char *portspec)
+{
+    port_info_t *port;
+
+    if (portspec == NULL) {
+	LOCK(ports_lock);
+	/* Dump everything. */
+	port = ports;
+	while (port != NULL) {
+	    LOCK(port->lock);
+	    showdevrxtx(cntlr, port);
+	    UNLOCK(port->lock);
+	    port = port->next;
+	}
+	UNLOCK(ports_lock);
+    } else {
+	port = find_port_by_num(portspec, true);
+	if (port == NULL) {
+	    controller_outputf(cntlr, "Invalid port number: %s\r\n", portspec);
+	} else {
+	    showdevrxtx(cntlr, port);
 	    UNLOCK(port->lock);
 	}
     }
