@@ -319,20 +319,22 @@ static char *help_str =
 "exit - leave the program.\r\n"
 "help - display this help.\r\n"
 "version - display the version of this program.\r\n"
-"monitor <type> <tcp port> - display all the input for a given port on\r\n"
+"monitor <type> [<tcp port>] - display all the input for a given port on\r\n"
 "       the calling control port.  Only one direction may be monitored\r\n"
 "       at a time.  The type field may be 'tcp' or 'term' and specifies\r\n"
 "       whether to monitor data from the TCP port or from the serial port\r\n"
 "       Note that data monitoring is best effort, if the controller port\r\n"
 "       cannot keep up the data will be silently dropped.  A controller\r\n"
 "       may only monitor one thing and a port may only be monitored by\r\n"
-"       one controller.\r\n"
+"       one controller. If no port is given, first port is displayed.\r\n"
 "monitor stop - stop the current monitor.\r\n"
 "disconnect <tcp port> - disconnect the tcp connection on the port.\r\n"
 "showport [<tcp port>] - Show information about a port. If no port is\r\n"
 "       given, all ports are displayed.\r\n"
 "showshortport [<tcp port>] - Show information about a port in a one-line\r\n"
 "       format. If no port is given, all ports are displayed.\r\n"
+"showdevrxtx [<tcp port>] - Show information device rx tx bytes a port in\r\n"
+"       a one-line format. If no port is given, all ports are displayed.\r\n"
 "setporttimeout <tcp port> <timeout> - Set the amount of time in seconds\r\n"
 "       before the port connection will be shut down if no activity\r\n"
 "       has been seen on the port.\r\n"
@@ -390,6 +392,11 @@ process_input_line(controller_info_t *cntlr)
 	tok = strtok_r(NULL, " \t", &strtok_data);
 	start_maint_op();
 	showshortports(cntlr, tok);
+	end_maint_op();
+    } else if (strcmp(tok, "showdevrxtx") == 0) {
+	tok = strtok_r(NULL, " \t", &strtok_data);
+	start_maint_op();
+	showdevrxtxs(cntlr, tok);
 	end_maint_op();
     } else if (strcmp(tok, "monitor") == 0) {
 	tok = strtok_r(NULL, " \t", &strtok_data);

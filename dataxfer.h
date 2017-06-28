@@ -68,6 +68,9 @@ void showports(struct controller_info *cntlr, char *portspec);
 /* Show information about a port (as above) but in a one-line format. */
 void showshortports(struct controller_info *cntlr, char *portspec);
 
+/* Show information device rx tx bytes a port in a one-line format. */
+void showdevrxtxs(struct controller_info *cntlr, char *portspec);
+
 /* Set the port's timeout.  The parameters are all strings that the
    routine will convert to integers.  Error output will be generated
    on invalid data. */
