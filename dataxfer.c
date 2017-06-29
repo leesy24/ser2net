@@ -3674,9 +3674,6 @@ clear_old_port_config(int curr_config)
     UNLOCK(ports_lock);
 }
 
-#define REMOTEADDR_COLUMN_WIDTH \
-    (INET6_ADDRSTRLEN - 1 /* terminating NUL */ + 1 /* comma */ + 5 /* strlen("65535") */)
-
 /* Print device rx tx bytes information of port to the control port given in cntlr. */
 static void
 showdevrxtx(struct controller_info *cntlr, port_info_t *port)
@@ -3686,6 +3683,9 @@ showdevrxtx(struct controller_info *cntlr, port_info_t *port)
     controller_outputf(cntlr, "%d", port->dev_bytes_sent);
     controller_outs(cntlr, "\r\n");
 }
+
+#define REMOTEADDR_COLUMN_WIDTH \
+    (INET6_ADDRSTRLEN - 1 /* terminating NUL */ + 1 /* comma */ + 5 /* strlen("65535") */)
 
 /* Print information about a port to the control port given in cntlr. */
 static void
