@@ -3678,7 +3678,6 @@ clear_old_port_config(int curr_config)
 static void
 showdevrxtx(struct controller_info *cntlr, port_info_t *port)
 {
-    controller_outputf(cntlr, "%s ", port->io.devname);
     controller_outputf(cntlr, "%d ", port->dev_bytes_received);
     controller_outputf(cntlr, "%d", port->dev_bytes_sent);
     controller_outs(cntlr, "\r\n");
